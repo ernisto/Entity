@@ -1,0 +1,17 @@
+[package]
+name = "ernisto/entity"
+version = "0.1.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+[dependencies]
+Promise = "lukadev-0/typed-promise@4.0.2"
+Wrapper = "ernisto/wrapper@0.4.2"
+Signal = "ernisto/signal@0.1.1"
+Cache = "ernisto/cache@0.3.1"
+
+[dev-dependencies]
+TestEZ = "ruizukun-dev/testez@0.4.8"
+
+[place]
+shared-packages = "game.ReplicatedStorage.Packages"
