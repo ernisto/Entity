@@ -154,6 +154,10 @@ function Entity.query(params: params)
         end
         return entities
     end
+    function self:find()
+        
+        return self:iter()()
+    end
     
     function self:check(instance: Instance): boolean
         
