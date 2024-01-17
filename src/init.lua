@@ -8,8 +8,8 @@ local Promise = require(script.Parent.Promise)
 type Promise<data...> = Promise.TypedPromise<data...>
 
 local wrapper = require(script.Parent.Wrapper)
-type _wrapper<instance> = wrapper._wrapper<instance>
-type wrapper<instance> = wrapper.wrapper<instance>
+type _wrapper<instance> = { roblox: instance }--wrapper._wrapper<instance>
+type wrapper<instance> = { roblox: instance }--wrapper.wrapper<instance>
 
 --// Module
 local Entity = {}
@@ -27,7 +27,7 @@ function Entity.trait<entity, addons, params...>(tag: string, init: (entity: ent
     --// Functions
     function self.getAsync(entity: entity,...: params...): Promise<trait>
         
-        assert(typeof(entity) == "Instance")
+        assert(typeof(entity) == "Instance", `argument #1 (entity) must to be a Instance`)
         
         local data = table.pack(...)
         return cache:findFirstPromise(entity) or cache:promise(function(resolve, reject, onCancel)
@@ -145,14 +145,8 @@ function Entity.query(params: params)
     function self:all(): {Instance}
         
         local entities = {}
-        local pool = if tags[1]
-            then CollectionService:GetTagged(tags[1])
-            else (root or game):GetDescendants()
+        for entity in self:iter() do table.insert(entities, entity) end
         
-        for _,entity in pool do
-            
-            if self:check(entity) then table.insert(entities, entity) end
-        end
         return entities
     end
     function self:find()
