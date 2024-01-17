@@ -36,7 +36,7 @@ function Entity.trait<entity, addons, params...>(tag: string, init: (entity: ent
             traitObject.Name = tag
             
             local self = wrapper(traitObject, 'TraitObject')
-            ;(init :: any)(entity, self, unpack(data))
+            init(self, entity, unpack(data))
             
             entity:AddTag(tag)
             self:cleaner(function() entity:RemoveTag(tag) end)
