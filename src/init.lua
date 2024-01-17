@@ -8,28 +8,27 @@ local Promise = require(script.Parent.Promise)
 type Promise<data...> = Promise.TypedPromise<data...>
 
 local wrapper = require(script.Parent.Wrapper)
-type _wrapper<instance> = { roblox: instance }--wrapper._wrapper<instance>
-type wrapper<instance> = { roblox: instance }--wrapper.wrapper<instance>
+type _wrapper<instance> = wrapper._wrapper<instance>
+type wrapper<instance> = wrapper.wrapper<instance>
 
 --// Module
 local Entity = {}
 
 --// Functions
 -- function Entity.trait<entity, addons, params...>(tag: string, init: (entity: entity, self: {}) -> addons)
-function Entity.trait<entity, addons, params...>(tag: string, init: (entity: entity, self: _wrapper<entity> & addons, params...) -> ())
+function Entity.trait<entity, addons, syncs>(tag: string, init: (self: _wrapper<entity> & addons & syncs, entity: entity, syncs: syncs) -> ()): TraitHandler<entity, wrapper<entity> & addons & syncs>
     
-    type trait = wrapper<entity> & addons
+    type trait = wrapper<entity> & addons & syncs
     
-    local meta = { __locked = 'locked' }
+    local meta = { __metatable = 'locked' }
     local self = setmetatable({}, meta)
     local cache = Cache.async(-1, 'k')
     
     --// Functions
-    function self.getAsync(entity: entity,...: params...): Promise<trait>
+    function self.getAsync(entity: entity): Promise<trait>
         
         assert(typeof(entity) == "Instance", `argument #1 (entity) must to be a Instance`)
         
-        local data = table.pack(...)
         return cache:findFirstPromise(entity) or cache:promise(function(resolve, reject, onCancel)
             
             local traitObject = Entity.query{ root=entity, tag='TraitObject', name=tag }:find()
@@ -37,7 +36,7 @@ function Entity.trait<entity, addons, params...>(tag: string, init: (entity: ent
             traitObject.Name = tag
             
             local self = wrapper(traitObject, 'TraitObject')
-            init(self, entity, unpack(data))
+            init(self :: trait, entity)
             
             entity:AddTag(tag)
             self:cleaner(function() entity:RemoveTag(tag) end)
@@ -60,9 +59,9 @@ function Entity.trait<entity, addons, params...>(tag: string, init: (entity: ent
         
         return cache:find(entity)
     end
-    function self.get(entity: entity,...: params...): trait
+    function self.get(entity: entity): trait
         
-        return self.getAsync(entity, select(1 :: any,...)):expect()
+        return self.getAsync(entity):expect()
     end
     function self.all(): {trait}
         
@@ -84,7 +83,7 @@ function Entity.trait<entity, addons, params...>(tag: string, init: (entity: ent
     
     --// End
     Entity.query{ tag=tag }:track(self.get)
-    return self
+    return self :: any
 end
 
 type params = { tag: string?, tags: {string}?, root: Instance?, name: string?, class: string? }
@@ -167,6 +166,25 @@ function Entity.query(params: params)
     --// End
     return table.freeze(self)
 end
+
+--// Types
+export type TraitHandler<entity, trait> = typeof(setmetatable(
+    {} :: {
+        getAsync: (entity: entity) -> Promise<trait>,
+        await: (entity: entity) -> trait,
+        find: (entity: entity) -> trait?,
+        get: (entity: entity) -> trait,
+        all: () -> {trait},
+    },
+    {} :: {
+        __call: (any, entity: entity) -> {
+            getAsync: () -> Promise<trait>,
+            await: () -> trait,
+            find: () -> trait?,
+            get: () -> trait,
+        }
+    }
+))
 
 --// End
 return Entity
