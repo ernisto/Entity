@@ -117,6 +117,10 @@ function Entity.query(params: params)
         
         return entityAdded
     end
+    function self:await(): Instance
+        
+        return self:listen():await()
+    end
     
     function self:iter()
         
