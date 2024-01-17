@@ -32,7 +32,8 @@ function Entity.trait<entity, addons, params...>(tag: string, init: (entity: ent
         local data = table.pack(...)
         return cache:findFirstPromise(entity) or cache:promise(function(resolve, reject, onCancel)
             
-            local traitObject = Instance.new("ObjectValue", entity)
+            local traitObject = Entity.query{ root=entity, tag='TraitObject', name=tag }:find()
+                or Instance.new("ObjectValue", entity)
             traitObject.Name = tag
             
             local self = wrapper(traitObject, 'TraitObject')
