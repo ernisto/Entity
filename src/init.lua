@@ -117,6 +117,21 @@ function Entity.query(params: params)
         
         return entityAdded
     end
+    
+    function self:iter()
+        
+        local pool = if tags and tags[1]
+            then CollectionService:GetTagged(tags[1])
+            else (root or game):GetDescendants()
+        
+        return coroutine.wrap(function()
+            
+            for _,entity in pool do
+                
+                if self:check(entity) then coroutine.yield(entity) end
+            end
+        end)
+    end
     function self:map(mapper: (entity: Instance) -> ()): Signal.Connection
         
         for _,entity in self:all() do task.spawn(mapper, entity) end
