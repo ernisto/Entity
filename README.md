@@ -9,10 +9,14 @@ Entity = "ernisto/entity@0.2.0"
 
 ## Usage
 ```lua
-local EquippedItem = Entity.trait('EquippedItem', function(tool: Tool, self)
+type inventoryData = { slots: number }
+
+local EquippedItem = Entity.trait('EquippedItem', function(self, tool: Tool)
 end)
-local Inventory = Entity.trait('Inventory', function(player: Player, self)
+local Inventory = Entity.trait('Inventory', function(self, player: Player, syncs: inventoryData)
     
+    local data = awaitData(player)
+    self:_applyAttributes(data)
     self.items = {}
     
     function self:addItem(item: Tool)
@@ -32,7 +36,7 @@ local Inventory = Entity.trait('Inventory', function(player: Player, self)
     function self:unequipItem(item: Tool)
         
         assert(self.items[item] == 'equipped', `item already unequipped`)
-
+        
         self.items[item]:unwrap()
         self.items[item] = 'unequipped'
     end
