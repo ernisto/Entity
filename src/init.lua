@@ -170,7 +170,7 @@ function Entity.query(params: params)
     end
     
     --// End
-    return self
+    return table.freeze(self)
 end
 
 --// End
