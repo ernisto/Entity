@@ -41,7 +41,7 @@ function Entity.trait<entity, addons, params...>(tag: string, init: (entity: ent
             entity:AddTag(tag)
             self:cleaner(function() entity:RemoveTag(tag) end)
             
-            return self
+            resolve(self)
         end, entity)
     end
     function self.await(entity: entity): trait
