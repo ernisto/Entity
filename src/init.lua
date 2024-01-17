@@ -83,7 +83,7 @@ function Entity.trait<entity, addons, params...>(tag: string, init: (entity: ent
     end
     
     --// End
-    Entity.query{ tag=tag }:map(self.get)
+    Entity.query{ tag=tag }:track(self.get)
     return self
 end
 
@@ -137,10 +137,10 @@ function Entity.query(params: params)
             end
         end)
     end
-    function self:map(mapper: (entity: Instance) -> ()): Signal.Connection
+    function self:track(tracker: (entity: Instance) -> ()): Signal.Connection
         
-        for _,entity in self:all() do task.spawn(mapper, entity) end
-        return self:listen():connect(mapper)
+        for _,entity in self:all() do task.spawn(tracker, entity) end
+        return self:listen():connect(tracker)
     end
     function self:all(): {Instance}
         
