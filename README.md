@@ -32,6 +32,8 @@ local Inventory = Entity.trait('Inventory', function(player: Player, self)
     function self:unequipItem(item: Tool)
         
         assert(self.items[item] == 'equipped', `item already unequipped`)
+
+        self.items[item]:unwrap()
         self.items[item] = 'unequipped'
     end
 end)
