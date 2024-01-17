@@ -59,9 +59,9 @@ function Entity.trait<entity, addons, params...>(tag: string, init: (entity: ent
         
         return cache:find(entity)
     end
-    function self.get(entity: entity): trait
+    function self.get(entity: entity,...: params...): trait
         
-        return self.getAsync(entity):expect()
+        return self.getAsync(entity, select(1 :: any,...)):expect()
     end
     function self.all(): {trait}
         
