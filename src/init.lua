@@ -30,7 +30,7 @@ function Entity.trait<entity, addons, params...>(tag: string, init: (entity: ent
         assert(typeof(entity) == "Instance")
         
         local data = table.pack(...)
-        return cache:findPromise(entity) or cache:promise(function(resolve, reject, onCancel)
+        return cache:findFirstPromise(entity) or cache:promise(function(resolve, reject, onCancel)
             
             local traitObject = Instance.new("ObjectValue", entity)
             traitObject.Name = tag
