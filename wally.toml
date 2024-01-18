@@ -8,7 +8,7 @@ realm = "shared"
 Promise = "lukadev-0/typed-promise@4.0.2"
 Wrapper = "ernisto/wrapper@0.4.2"
 Signal = "ernisto/signal@0.1.1"
-Cache = "ernisto/cache@0.4.0"
+Cache = "ernisto/cache@0.4.2"
 
 [dev-dependencies]
 TestEZ = "ruizukun-dev/testez@0.4.8"
