@@ -39,7 +39,7 @@ function Entity.trait<entity, addons, syncs>(tag: string, init: (self: _wrapper<
             init(self :: trait, entity)
             
             entity:AddTag(tag)
-            self:cleaner(function() entity:RemoveTag(tag) end)
+            self:cleaner(function() entity:RemoveTag(tag); traitObject:Destroy() end)
             
             resolve(self)
         end, entity)
