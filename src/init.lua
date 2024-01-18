@@ -82,8 +82,12 @@ function Entity.trait<entity, addons, syncs>(tag: string, init: (self: _wrapper<
     end
     
     --// End
-    Entity.query{ tag=tag }:track(self.get)
-    return self :: any
+    Entity.query{ tag=tag }:track(function(entity)
+        
+        if entity:HasTag('asset') then return end
+        self.get(entity)
+    end)
+    return self
 end
 
 type params = { tag: string?, tags: {string}?, root: Instance?, name: string?, class: string? }
